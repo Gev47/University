@@ -1,5 +1,6 @@
 package com.example.university.service;
 
+import com.example.university.dto.SubjectCountDTO;
 import com.example.university.dto.SubjectDTO;
 import com.example.university.mapper.SubjectMapper;
 import com.example.university.model.Subject;
@@ -58,5 +59,12 @@ public class SubjectService {
                 .orElseThrow(() -> new RuntimeException("Subject not found with id: " + id));
         subjectRepository.deleteById(id);
         return ResponseEntity.ok(SubjectMapper.toDTO(subject));
+    }
+    public ResponseEntity<List<SubjectCountDTO>> countSubjectsByExamType() {
+        List<SubjectCountDTO> result = subjectRepository.countSubjectsByExamType();
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(result);
     }
 }

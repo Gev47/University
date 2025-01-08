@@ -1,5 +1,4 @@
 package com.example.university.dto;
-// record class ????
 public class SubjectDTO {
     private final String name;
     private final int hours;

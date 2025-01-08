@@ -1,5 +1,6 @@
 package com.example.university.controller;
 
+import com.example.university.dto.SubjectCountDTO;
 import com.example.university.service.SubjectService;
 import com.example.university.dto.SubjectDTO;
 import org.springframework.http.ResponseEntity;
@@ -41,4 +42,10 @@ public class SubjectsController {
     public ResponseEntity<SubjectDTO> deleteSubject(@PathVariable long id) {
         return subjectService.deleteSubject(id);
     }
+
+    @GetMapping("/count-by-exam-type")
+    public ResponseEntity<List<SubjectCountDTO>> countSubjectsByExamType() {
+        return subjectService.countSubjectsByExamType();
+    }
+
 }

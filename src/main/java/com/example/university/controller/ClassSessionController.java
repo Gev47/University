@@ -1,6 +1,7 @@
 package com.example.university.controller;
 
 import com.example.university.dto.ClassSessionDTO;
+import com.example.university.dto.ClassSessionDetailDTO;
 import com.example.university.service.ClassSessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +41,15 @@ public class ClassSessionController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ClassSessionDTO> deleteClassSession(@PathVariable Long id) {
         return classSessionService.deleteClassSession(id);
+    }
+    @GetMapping("/details")
+    public ResponseEntity<List<ClassSessionDetailDTO>> getClassSessionDetails() {
+       return classSessionService.getClassSessionDetails();
+    }
+    @PutMapping("/update-auditorium")
+    public ResponseEntity<String> updateAuditoriumByGroupName(
+            @RequestParam String groupName,
+            @RequestParam String newAuditorium) {
+        return classSessionService.updateAuditoriumByGroupName(groupName, newAuditorium);
     }
 }

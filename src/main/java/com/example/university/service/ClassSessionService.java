@@ -1,11 +1,13 @@
 package com.example.university.service;
 
 import com.example.university.dto.ClassSessionDTO;
+import com.example.university.dto.ClassSessionDetailDTO;
 import com.example.university.mapper.ClassSessionMapper;
 import com.example.university.model.ClassSession;
 import com.example.university.repository.ClassSessionRepository;
 import com.example.university.repository.SubjectRepository;
 import com.example.university.repository.TeacherRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -61,5 +63,22 @@ public class ClassSessionService {
                 .orElseThrow(() -> new RuntimeException("ClassSession not found with ID: " + id));
         classSessionRepository.deleteById(id);
         return ResponseEntity.ok(ClassSessionMapper.toDTO(classSession));
+    }
+    public ResponseEntity<List<ClassSessionDetailDTO>> getClassSessionDetails() {
+        List<ClassSessionDetailDTO> details  = classSessionRepository.findAllClassSessionDetails();
+        if (details.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(details);
+    }
+
+    @Transactional
+    public ResponseEntity<String> updateAuditoriumByGroupName(String groupName, String newAuditorium) {
+        int updatedRows = classSessionRepository.updateAuditoriumByGroupName(groupName, newAuditorium);
+        if (updatedRows > 0) {
+            return ResponseEntity.ok("Successfully updated " + updatedRows + " session(s).");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

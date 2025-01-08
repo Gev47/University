@@ -44,4 +44,15 @@ public class TeachersController {
         return teacherService.deleteTeacher(id);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<TeacherDTO>> getTeachersByDepartmentAndDegree(@RequestParam String department, @RequestParam String degree) {
+        return teacherService.getTeachersByDepartmentAndDegree(department, degree);
+    }
+
+    @GetMapping("/sorted")
+    public ResponseEntity<List<TeacherDTO>> getAllTeachersSorted(
+            @RequestParam(defaultValue = "fullName") String sortBy) {
+        return teacherService.getAllTeachersSorted(sortBy);
+    }
+
 }
