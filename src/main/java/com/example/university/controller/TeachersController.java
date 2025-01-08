@@ -18,8 +18,10 @@ public class TeachersController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TeacherDTO>> getAllTeachers() {
-        return teacherService.getAllTeachers();
+    public ResponseEntity<List<TeacherDTO>> getAllTeachers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size) {
+        return teacherService.getAllTeachers(page, size);
     }
 
     @PostMapping

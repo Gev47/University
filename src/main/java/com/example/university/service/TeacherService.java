@@ -1,9 +1,10 @@
 package com.example.university.service;
-
+import org.springframework.data.domain.Page;
 import com.example.university.dto.TeacherDTO;
 import com.example.university.mapper.TeacherMapper;
 import com.example.university.model.Teacher;
 import com.example.university.repository.TeacherRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,16 @@ public class TeacherService {
         this.teacherRepository = teacherRepository;
     }
 
-    public ResponseEntity<List<TeacherDTO>> getAllTeachers() {
-        List<TeacherDTO> subjects = teacherRepository.findAll().stream()
+    public ResponseEntity<List<TeacherDTO>> getAllTeachers(int page, int size) {
+        Page<Teacher> teacherPage = teacherRepository.findAll(PageRequest.of(page, size));
+        List<TeacherDTO> teacherDTOs = teacherPage.getContent().stream()
                 .map(TeacherMapper::toDTO)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(subjects);
+
+        if (teacherDTOs.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(teacherDTOs);
     }
 
     public ResponseEntity<TeacherDTO> createTeacher(TeacherDTO teacherDTO) {
