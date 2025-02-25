@@ -1,7 +1,8 @@
 package com.example.university.controller;
 
-import com.example.university.service.TeacherService;
 import com.example.university.dto.TeacherDTO;
+import com.example.university.service.TeacherService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,40 +22,55 @@ public class TeachersController {
     public ResponseEntity<List<TeacherDTO>> getAllTeachers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "2") int size) {
-        return teacherService.getAllTeachers(page, size);
+        List<TeacherDTO> teachers = teacherService.getAllTeachers(page, size);
+        if (teachers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(teachers);
     }
 
     @PostMapping
     public ResponseEntity<TeacherDTO> createTeacher(@RequestBody TeacherDTO teacherDTO) {
-        return teacherService.createTeacher(teacherDTO);
+        TeacherDTO createdTeacher = teacherService.createTeacher(teacherDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTeacher);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TeacherDTO> getTeacherById(@PathVariable Long id) {
-        return teacherService.getTeacherById(id);
+        TeacherDTO teacher = teacherService.getTeacherById(id);
+        return ResponseEntity.ok(teacher);
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<TeacherDTO> updateTeacher(@PathVariable Long id, @RequestBody TeacherDTO updatedTeacherDTO) {
-        return teacherService.updateTeacher(id, updatedTeacherDTO);
+        TeacherDTO updatedTeacher = teacherService.updateTeacher(id, updatedTeacherDTO);
+        return ResponseEntity.ok(updatedTeacher);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<TeacherDTO> deleteTeacher(@PathVariable Long id) {
-        return teacherService.deleteTeacher(id);
+        TeacherDTO deletedTeacher = teacherService.deleteTeacher(id);
+        return ResponseEntity.ok(deletedTeacher);
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<TeacherDTO>> getTeachersByDepartmentAndDegree(@RequestParam String department, @RequestParam String degree) {
-        return teacherService.getTeachersByDepartmentAndDegree(department, degree);
+    public ResponseEntity<List<TeacherDTO>> getTeachersByDepartmentAndDegree(
+            @RequestParam String department,
+            @RequestParam String degree) {
+        List<TeacherDTO> teachers = teacherService.getTeachersByDepartmentAndDegree(department, degree);
+        if (teachers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(teachers);
     }
 
     @GetMapping("/sorted")
     public ResponseEntity<List<TeacherDTO>> getAllTeachersSorted(
             @RequestParam(defaultValue = "fullName") String sortBy) {
-        return teacherService.getAllTeachersSorted(sortBy);
+        List<TeacherDTO> teachers = teacherService.getAllTeachersSorted(sortBy);
+        if (teachers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(teachers);
     }
-
 }

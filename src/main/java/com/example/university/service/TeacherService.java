@@ -1,13 +1,12 @@
 package com.example.university.service;
-import org.springframework.data.domain.Page;
+
 import com.example.university.dto.TeacherDTO;
 import com.example.university.mapper.TeacherMapper;
 import com.example.university.model.Teacher;
 import com.example.university.repository.TeacherRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,33 +21,27 @@ public class TeacherService {
         this.teacherRepository = teacherRepository;
     }
 
-    public ResponseEntity<List<TeacherDTO>> getAllTeachers(int page, int size) {
+    public List<TeacherDTO> getAllTeachers(int page, int size) {
         Page<Teacher> teacherPage = teacherRepository.findAll(PageRequest.of(page, size));
-        List<TeacherDTO> teacherDTOs = teacherPage.getContent().stream()
+        return teacherPage.getContent()
+                .stream()
                 .map(TeacherMapper::toDTO)
                 .collect(Collectors.toList());
-
-        if (teacherDTOs.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(teacherDTOs);
     }
 
-    public ResponseEntity<TeacherDTO> createTeacher(TeacherDTO teacherDTO) {
+    public TeacherDTO createTeacher(TeacherDTO teacherDTO) {
         Teacher teacher = TeacherMapper.toEntity(teacherDTO);
         Teacher savedTeacher = teacherRepository.save(teacher);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(TeacherMapper.toDTO(savedTeacher));
+        return TeacherMapper.toDTO(savedTeacher);
     }
 
-
-    public ResponseEntity<TeacherDTO> getTeacherById(Long id) {
+    public TeacherDTO getTeacherById(Long id) {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
-        return ResponseEntity.ok(TeacherMapper.toDTO(teacher));
+        return TeacherMapper.toDTO(teacher);
     }
 
-    public ResponseEntity<TeacherDTO> updateTeacher(Long id, TeacherDTO updatedTeacherDTO) {
+    public TeacherDTO updateTeacher(Long id, TeacherDTO updatedTeacherDTO) {
         Teacher updatedTeacher = teacherRepository.findById(id)
                 .map(teacher -> {
                     teacher.setFullName(updatedTeacherDTO.getFullName());
@@ -58,38 +51,27 @@ public class TeacherService {
                     return teacherRepository.save(teacher);
                 })
                 .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
-
-        return ResponseEntity.ok(TeacherMapper.toDTO(updatedTeacher));
+        return TeacherMapper.toDTO(updatedTeacher);
     }
 
-    public ResponseEntity<TeacherDTO> deleteTeacher(Long id) {
+    public TeacherDTO deleteTeacher(Long id) {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Teacher not found with id: " + id));
-
         teacherRepository.deleteById(id);
-        return ResponseEntity.ok(TeacherMapper.toDTO(teacher));
+        return TeacherMapper.toDTO(teacher);
     }
-        public ResponseEntity<List<TeacherDTO>> getTeachersByDepartmentAndDegree(String department, String degree) {
-            List<TeacherDTO> teacherDTOs = teacherRepository.findByDepartmentAndAcademicDegree(department, degree)
-                    .stream()
-                    .map(TeacherMapper::toDTO)
-                    .collect(Collectors.toList());
 
-            if (teacherDTOs.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(teacherDTOs);
-        }
-
-    public ResponseEntity<List<TeacherDTO>> getAllTeachersSorted(String sortBy) {
-        List<TeacherDTO> sortedTeachers = teacherRepository.findAll(Sort.by(Sort.Direction.ASC, sortBy))
+    public List<TeacherDTO> getTeachersByDepartmentAndDegree(String department, String degree) {
+        return teacherRepository.findByDepartmentAndAcademicDegree(department, degree)
                 .stream()
                 .map(TeacherMapper::toDTO)
                 .collect(Collectors.toList());
+    }
 
-        if (sortedTeachers.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(sortedTeachers);
+    public List<TeacherDTO> getAllTeachersSorted(String sortBy) {
+        return teacherRepository.findAll(Sort.by(Sort.Direction.ASC, sortBy))
+                .stream()
+                .map(TeacherMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

@@ -1,8 +1,9 @@
 package com.example.university.controller;
 
 import com.example.university.dto.SubjectCountDTO;
-import com.example.university.service.SubjectService;
 import com.example.university.dto.SubjectDTO;
+import com.example.university.service.SubjectService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,32 +21,43 @@ public class SubjectsController {
 
     @GetMapping
     public ResponseEntity<List<SubjectDTO>> getSubjects() {
-        return subjectService.getAllSubjects();
+        List<SubjectDTO> subjects = subjectService.getAllSubjects();
+        if (subjects.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(subjects);
     }
 
     @PostMapping
     public ResponseEntity<SubjectDTO> createSubject(@RequestBody SubjectDTO subjectDTO) {
-        return subjectService.createSubject(subjectDTO);
+        SubjectDTO createdSubject = subjectService.createSubject(subjectDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdSubject);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SubjectDTO> getSubject(@PathVariable long id) {
-        return subjectService.getSubjectById(id);
+        SubjectDTO subject = subjectService.getSubjectById(id);
+        return ResponseEntity.ok(subject);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SubjectDTO> updateSubject(@PathVariable long id, @RequestBody SubjectDTO updatedSubjectDTO) {
-        return subjectService.updateSubject(id, updatedSubjectDTO);
+        SubjectDTO updatedSubject = subjectService.updateSubject(id, updatedSubjectDTO);
+        return ResponseEntity.ok(updatedSubject);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<SubjectDTO> deleteSubject(@PathVariable long id) {
-        return subjectService.deleteSubject(id);
+        SubjectDTO deletedSubject = subjectService.deleteSubject(id);
+        return ResponseEntity.ok(deletedSubject);
     }
 
     @GetMapping("/count-by-exam-type")
     public ResponseEntity<List<SubjectCountDTO>> countSubjectsByExamType() {
-        return subjectService.countSubjectsByExamType();
+        List<SubjectCountDTO> counts = subjectService.countSubjectsByExamType();
+        if (counts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(counts);
     }
-
 }
